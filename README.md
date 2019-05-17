@@ -1,2 +1,2 @@
 # OSRSBot
-Trying to learn python by making a bot for OSRS
+To run this bot be sure to have installed RuneLite as it will search for images found in this program.
