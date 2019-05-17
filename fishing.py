@@ -18,6 +18,7 @@ windowY2 = 0
 pswd = ''
 
 botActivated = False
+coldStart = False
 
 def main():
     global pswd
@@ -37,13 +38,15 @@ def findWindow(hwnd, extra):
         beginBot(hwnd)
 
 def openRuneLite():
-    runeLite = imagesearch_region_loop('runeLite.png', 1, 0, 0, GetSystemMetrics(0), GetSystemMetrics(1), 0.8)
+    global coldStart
+    coldStart = True
+    runeLite = imagesearch_region_loop('images/runeLite.png', 1, 0, 0, GetSystemMetrics(0), GetSystemMetrics(1), 0.8)
 
     clickx = runeLite[0] + windowX1 + random.randint(0,30)
     clicky = runeLite[1] + windowY1 + random.randint(0,30)
-    pyautogui.moveTo(clickx, clicky, random.randint(2,12) / 10)
+    pyautogui.moveTo(clickx, clicky, random.randint(8,15) / 100)
     pyautogui.click(button='left')
-    time.sleep(14)
+    time.sleep(9)
     win32gui.EnumWindows(findWindow, None)
 
 def beginBot(window):
@@ -64,7 +67,7 @@ def beginBot(window):
     counter = 0
     try:
         while True:
-            if not isLoggedIn():
+            if not isLoggedIn() or coldStart:
                 logIn()
             elif isFullInventory():
                 print("\t\tEmptying inventory")
@@ -81,19 +84,22 @@ def beginBot(window):
         pass
 
 def isLoggedIn():
-    login = imagesearcharea('existingUser.png', windowX1, windowY1, windowX2, windowY2, 0.8, True)
+    login = imagesearcharea('images/existingUser.png', windowX1, windowY1, windowX2, windowY2, 0.8)
     return login[0] == -1
 
 def logIn():
+    global pswd
+    global coldStart
+
+    coldStart = False
+
     print("\t" + datetime.now().strftime('%H:%M:%S')+ " Logging in...")
-    existingUser = imagesearch_region_loop('existingUser.png', 1, windowX1, windowY1, windowX2, windowY2, 0.8)
+    existingUser = imagesearch_region_loop('images/existingUser.png', 1, windowX1, windowY1, windowX2, windowY2, 0.8)
 
     clickx = existingUser[0] + windowX1 + random.randint(0,30)
     clicky = existingUser[1] + windowY1 + random.randint(0,30)
     pyautogui.moveTo(clickx, clicky, random.randint(2,12) / 10)
     pyautogui.click(button='left')
-    
-    global pswd
 
     pyautogui.typewrite(pswd) 
     time.sleep(random.randint(18,60) / 100)
@@ -101,14 +107,14 @@ def logIn():
 
     switchWorld()
 
-    login = imagesearch_region_loop('login.png', 1, windowX1, windowY1, windowX2, windowY2, 0.8)
+    login = imagesearch_region_loop('images/login.png', 1, windowX1, windowY1, windowX2, windowY2, 0.8)
 
     clickx = login[0] + windowX1 + random.randint(0,120)
     clicky = login[1] + windowY1 + random.randint(0,30)
     pyautogui.moveTo(clickx, clicky, random.randint(2,12) / 10)
     pyautogui.click(button='left')
 
-    play = imagesearch_region_loop('play.png', 1, windowX1, windowY1, windowX2, windowY2, 0.8)
+    play = imagesearch_region_loop('images/play.png', 1, windowX1, windowY1, windowX2, windowY2, 0.8)
 
     clickx = play[0] + windowX1 + random.randint(0,120)
     clicky = play[1] + windowY1 + random.randint(0,40)
@@ -116,14 +122,14 @@ def logIn():
     pyautogui.click(button='left')
     
 def switchWorld():
-    clickHere = imagesearch_region_loop('worldSwitch.png', 1, windowX1, windowY1, windowX2, windowY2, 0.8)
+    clickHere = imagesearch_region_loop('images/worldSwitch.png', 1, windowX1, windowY1, windowX2, windowY2, 0.8)
 
     clickx = clickHere[0] + windowX1 + random.randint(0,80)
     clicky = clickHere[1] + windowY1 + random.randint(0,15)
     pyautogui.moveTo(clickx, clicky, random.randint(2,12) / 10)
     pyautogui.click(button='left')
 
-    clickHere = imagesearch_region_loop('w379.png', 1, windowX1, windowY1, windowX2, windowY2, 0.9)
+    clickHere = imagesearch_region_loop('images/w469.png', 1, windowX1, windowY1, windowX2, windowY2, 0.9)
 
     clickx = clickHere[0] + windowX1 + random.randint(0,10)
     clicky = clickHere[1] + windowY1 + random.randint(0,80)
@@ -131,11 +137,11 @@ def switchWorld():
     pyautogui.click(button='left')
 
 def isFullInventory():
-    isFull = imagesearcharea('isFull.png', windowX1, windowY1, windowX2, windowY2, 0.6)
+    isFull = imagesearcharea('images/isFull.png', windowX1, windowY1, windowX2, windowY2, 0.6)
     return isFull[0] != -1
 
 def isFishing():
-    isCurrentlyFish = imagesearcharea('isFishing.png', windowX1 + 6, windowY1 + 46, windowX1 + 140, windowY1 + 108, 0.95, True)
+    isCurrentlyFish = imagesearcharea('images/fishing/isFishing.png', windowX1 + 6, windowY1 + 46, windowX1 + 140, windowY1 + 108, 0.95)
     return isCurrentlyFish[0] != -1
 
 def emptyInventory():
@@ -143,50 +149,8 @@ def emptyInventory():
     emptyBag()
     attemptToFish()
 
-def openBag():
-    bag = imagesearcharea('backpack.png', windowX1, windowY1, windowX2, windowY2, 0.8)
-
-    if bag[0] != -1:
-        clickx = bag[0] + windowX1 + random.randint(10,28)
-        clicky = bag[1] + windowY1 + random.randint(4,10)
-        pyautogui.moveTo(clickx, clicky, random.randint(2,12) / 10)
-    else:
-        pyautogui.moveTo(windowX1 + 20, windowY1 + 4)
-    
-    pyautogui.click(button='left')
-
-def emptyBag():
-    pyautogui.keyDown('shift')
-
-    topLeft = [663, 314]
-    itemSize = 25
-    itemHeight = 37
-    itemWidth = 42
-
-    for y in range(7):
-
-        decision = random.randint(0,2)
-        if decision == 0:
-            pyautogui.hotkey('left', 'left', 'left', 'left', 'left')
-        elif decision == 1:
-            pyautogui.hotkey('right', 'right', 'right', 'right', 'right')
-
-        for x in range(4):
-            if x != 0 or y != 0:
-                clickx = topLeft[0] + (itemWidth * x) + random.randint(0,itemSize)
-                clicky = topLeft[1] + (itemHeight * y) + random.randint(0,itemSize)
-
-                pyautogui.moveTo(windowX1 + clickx, windowY1 + clicky, random.randint(11,23) / 100)
-                pyautogui.click(button='left')
-
-    pyautogui.keyUp('shift')
-    
-    decision = random.randint(0,3)
-    if decision == 1:
-        recenter()
-
 def recenter():
-    mapIcon = imagesearcharea('mapIcon.png', windowX1, windowY1, windowX2, windowY2, 0.97, True)
+    mapIcon = imagesearcharea('images/mapIcon.png', windowX1, windowY1, windowX2, windowY2, 0.97)
 
     if mapIcon[0] != -1:
         clickx = mapIcon[0] + windowX1 - 140 + random.randint(0,20)
@@ -202,7 +166,7 @@ def recenter():
     pyautogui.hotkey('up', 'up', 'up', 'up', 'up')
 
 def closeBag():
-    openBag = imagesearcharea('backpackOpen.png', windowX1, windowY1, windowX2, windowY2, 0.8)
+    openBag = imagesearcharea('images/backpackOpen.png', windowX1, windowY1, windowX2, windowY2, 0.8)
 
     if openBag[0] != -1:
         clickx = openBag[0] + windowX1 + random.randint(10,28)
@@ -210,8 +174,53 @@ def closeBag():
         pyautogui.moveTo(clickx, clicky, random.randint(2,7) / 10)
         pyautogui.click(button='left')
 
+def openBag():
+    bag = imagesearcharea('images/backpack.png', windowX1, windowY1, windowX2, windowY2, 0.8)
+
+    if bag[0] != -1:
+        clickx = bag[0] + windowX1 + random.randint(10,28)
+        clicky = bag[1] + windowY1 + random.randint(4,10)
+        pyautogui.moveTo(clickx, clicky, random.randint(2,12) / 10)
+    else:
+        pyautogui.moveTo(windowX1 + 20, windowY1 + 4)
+    
+    pyautogui.click(button='left')
+
+def emptyBag():
+    pyautogui.keyDown('shift')
+
+    openBag = imagesearcharea('images/backpackOpen.png', windowX1, windowY1, windowX2, windowY2, 0.8)
+    if openBag[0] != -1:
+        topLeft = [openBag[0] - 51, openBag[0] - 400]
+        #topLeft = [663, 314]
+        itemSize = 25
+        itemHeight = 37
+        itemWidth = 42
+
+        for y in range(7):
+
+            decision = random.randint(0,2)
+            if decision == 0:
+                pyautogui.hotkey('left', 'left', 'left', 'left', 'left')
+            elif decision == 1:
+                pyautogui.hotkey('right', 'right', 'right', 'right', 'right')
+
+            for x in range(4):
+                if x != 0 or y != 0:
+                    clickx = topLeft[0] + (itemWidth * x) + random.randint(0,itemSize)
+                    clicky = topLeft[1] + (itemHeight * y) + random.randint(0,itemSize)
+
+                    pyautogui.moveTo(windowX1 + clickx, windowY1 + clicky, random.randint(11,23) / 100)
+                    pyautogui.click(button='left')
+
+    pyautogui.keyUp('shift')
+    
+    decision = random.randint(0,3)
+    if decision == 1:
+        recenter()
+
 def hasLeveledUp():
-    fishUp = imagesearcharea('fishUp.png', windowX1, windowY1, windowX2, windowY2, 0.8)
+    fishUp = imagesearcharea('images/fishing/fishUp.png', windowX1, windowY1, windowX2, windowY2, 0.8)
     return fishUp[0] != -1
     
 def attemptToFish():
@@ -219,7 +228,7 @@ def attemptToFish():
     closeBag()
     
     #Right click on fishing spot
-    fishLoc = imagesearch_region_loop('lobster.png', 1, windowX1, windowY1, windowX2, windowY2, random.randint(9,35) / 100)
+    fishLoc = imagesearch_region_loop('images/fishing/lobster.png', 1, windowX1, windowY1, windowX2, windowY2, random.randint(9,35) / 100)
     clickx = fishLoc[0] + windowX1 + random.randint(1,8)
     clicky = fishLoc[1] + windowY1 + random.randint(4,18)
     pyautogui.moveTo(clickx, clicky, random.randint(2,12) / 10)
@@ -228,7 +237,7 @@ def attemptToFish():
     time.sleep(random.randint(12,84) / 100)
 
     #Click on harpooning
-    harpoonLoc = imagesearcharea('harpoon.png', windowX1, windowY1, windowX2, windowY2, 0.8, True)
+    harpoonLoc = imagesearcharea('images/fishing/harpoon.png', windowX1, windowY1, windowX2, windowY2, 0.8)
 
     if harpoonLoc[0] != -1:
         clickx = harpoonLoc[0] + windowX1 + random.randint(5,100)
@@ -237,16 +246,17 @@ def attemptToFish():
         pyautogui.moveTo(clickx, clicky, random.randint(12,40) / 100)
         pyautogui.click(button='left')
 
-        time.sleep(1)
-        isFull = imagesearcharea('isFull.png', windowX1, windowY1, windowX2, windowY2, 0.6)
-        if isFull[0] != -1:
-            attemptToFish()
+        time.sleep(random.randint(12,40) / 100)
+        if isFullInventory():
+            emptyInventory()
     else:
         print("\t\t\tFailed to find harpoon")
         pyautogui.moveTo(windowX1 - 20, windowY1, random.randint(12,40) / 100)
         attemptToFish()
 
-#Region imported
+
+
+############################## Imported Region ##############################
 def region_grabber(region):
     x1 = region[0]
     y1 = region[1]
