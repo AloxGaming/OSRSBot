@@ -76,6 +76,8 @@ def beginBot(window):
                 attemptToFish()
             time.sleep(random.randint(18,80) / 10)
 
+            #Random mouse movement if away from keyboard since RuneLite
+            # will log you out if you're not at least moving the cursor
             counter = counter + 1
             if counter > 20:
                 pyautogui.moveTo(random.randint(0,1920), random.randint(0,1080), 0.6)
@@ -120,6 +122,8 @@ def logIn():
     clicky = play[1] + windowY1 + random.randint(0,40)
     pyautogui.moveTo(clickx, clicky, random.randint(2,12) / 10)
     pyautogui.click(button='left')
+
+    attemptToFish()
     
 def switchWorld():
     clickHere = imagesearch_region_loop('images/worldSwitch.png', 1, windowX1, windowY1, windowX2, windowY2, 0.8)
